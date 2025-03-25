@@ -1,0 +1,12 @@
+{
+    "mat-card": {
+    "isStandalone": true,
+    "imports": [
+      "CommonModule",
+      "MatCardModule",
+      "ProgressSpinnerComponent",
+      "ChartsModule",
+      "TranslateModule"
+    ]
+  }
+}
