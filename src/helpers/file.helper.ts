@@ -27,6 +27,8 @@ export class FileHelper {
     ngFeatures: /\*ngIf=|\*ngFor=/,
     commonPipes: /\|\s*(date|uppercase|lowercase)/,
     commonDirectives: /\bngClass\b|\bngStyle\b/,
+    htmlTagDeclaration: /<([a-zA-Z0-9-]+)[^>]*>/g,
+    htmlTagName: /<([a-zA-Z0-9-]+)/,
   };
 
   static getFiles(dir: string, extensions: string[]): string[] {

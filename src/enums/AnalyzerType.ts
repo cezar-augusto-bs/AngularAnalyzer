@@ -1,5 +1,5 @@
 export enum AnalyzerType {
   CommonModule = "common-modules",
-  StandaloneUnusedImports = "standalone-unused-imports",
-  StandaloneToMigrate = "standalone-to-migrate",
+  UnusedImports = "unused-imports",
+  StandaloneMigration = "standalone-migration",
 }
