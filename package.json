@@ -4,7 +4,7 @@
   "main": "check-common-module.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "analyze": "npx tsc && node dist/main.js",
+    "analyze": "npx tsc && node dist/index.js",
     "analyze:unused-imports": "npm run analyze -- unused-imports",
     "analyze:standalone-migration": "npm run analyze -- standalone-migration",
     "analyze:common-modules": "npm run analyze -- common-modules"

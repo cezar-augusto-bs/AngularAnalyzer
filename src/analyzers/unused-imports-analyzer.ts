@@ -68,7 +68,10 @@ export class UnusedComponentsImportsAnalyzer {
       let module;
       if (isStandalone) {
         imports = importsMatch
-          ? importsMatch[1].split(",").map((i: string) => i.trim())
+          ? importsMatch[1]
+              .split(",")
+              .map((i: string) => i.trim())
+              .filter(Boolean)
           : [];
       } else {
         module = Object.keys(modulesMap).find((module) =>
