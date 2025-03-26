@@ -12,10 +12,87 @@ export class UnusedComponentsImportsAnalyzer {
     const { componentsMap, componentsSelector } =
       this.getComponentsMapping(modulesMap);
 
-    this.analyzeUnusedImports(componentsSelector, componentsMap);
+    const unusedImports = this.getUnusedImportsInComponents(
+      componentsSelector,
+      componentsMap
+    );
+
+    this.removeUnusedImports(unusedImports, componentsMap);
   }
 
-  private static analyzeUnusedImports(
+  public static removeUnusedImports(
+    unusedImportsMap: ComponentMigrationMap,
+    componentsMap: ComponentDetailsMap
+  ) {
+    for (const [componentName, unusedImports] of Object.entries(
+      unusedImportsMap
+    )) {
+      const componentPath = componentsMap[componentName]?.path;
+      if (!componentPath) {
+        continue;
+      }
+      let fileContent = FileHelper.readFile(componentPath);
+
+      const importsDeclarationMatch = fileContent.match(
+        FileHelper.Regex.imports
+      );
+      if (!importsDeclarationMatch) {
+        continue;
+      }
+
+      const contentBeforeComponentMatch = fileContent.match(
+        /^(import\s.*?;[\s\n]*)+/gs
+      );
+
+      if (!contentBeforeComponentMatch) {
+        continue;
+      }
+      const contentBeforeComponent = contentBeforeComponentMatch[0];
+
+      const updatedContentBeforeComponent =
+        contentBeforeComponentMatch[0].replace(
+          FileHelper.Regex.importStatement,
+          (match) => {
+            if (
+              unusedImports.some((unusedImport) => match.includes(unusedImport))
+            ) {
+              return "";
+            }
+            return match;
+          }
+        );
+
+      let cleanedContentBeforeComponent = updatedContentBeforeComponent.replace(
+        /\n\s*\n+/g,
+        "\n"
+      );
+
+      fileContent = fileContent.replace(
+        contentBeforeComponent,
+        cleanedContentBeforeComponent
+      );
+
+      const importsDeclaration = importsDeclarationMatch[1];
+      const updatedImports = unusedImports.reduce(
+        (updatedContent, unusedImport) => {
+          const importRegex = new RegExp(`(?:,?\s*${unusedImport}\s*)`, "g");
+          return updatedContent
+            .replace(importRegex, "")
+            .replace(/\n\s*\n+/g, "\n")
+            .replace(/,\s*,/g, ",");
+        },
+        importsDeclaration
+      );
+
+      let updatedContent = fileContent.replace(
+        importsDeclaration,
+        updatedImports
+      );
+      FileHelper.writeFile(componentPath, updatedContent);
+    }
+  }
+
+  private static getUnusedImportsInComponents(
     componentsSelector: ComponentSelectorToClassMap,
     componentsMap: ComponentDetailsMap
   ) {
@@ -37,13 +114,18 @@ export class UnusedComponentsImportsAnalyzer {
       }
     }
 
-    FileHelper.writeFile(
+    FileHelper.writeOutputFile(
       "unused-components-imports-output.json",
       unusedImportsMap
     );
+
+    return unusedImportsMap;
   }
 
-  private static getComponentsMapping(modulesMap: ComponentMigrationMap) {
+  private static getComponentsMapping(modulesMap: ComponentMigrationMap): {
+    componentsMap: ComponentDetailsMap;
+    componentsSelector: ComponentSelectorToClassMap;
+  } {
     const files = [
       ...FileHelper.getFiles(FileHelper.ComponentsPath, this.fileExtensions),
       ...FileHelper.getFiles(FileHelper.SharedPath, this.fileExtensions),
@@ -81,6 +163,7 @@ export class UnusedComponentsImportsAnalyzer {
 
       componentsMap[className] = {
         selector: selector,
+        path: file,
         standalone: isStandalone,
         imports: imports,
         module: module,
@@ -90,7 +173,7 @@ export class UnusedComponentsImportsAnalyzer {
       componentsSelector[selector] = isStandalone ? className : module ?? "";
     }
 
-    // FileHelper.writeFile("components-map-output.json", componentsMap);
+    FileHelper.writeOutputFile("components-map-output.json", componentsMap);
     // FileHelper.writeFile(
     //   "components-selector-map-output.json",
     //   componentsSelector

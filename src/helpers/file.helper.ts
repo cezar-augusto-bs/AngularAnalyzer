@@ -16,7 +16,7 @@ export class FileHelper {
     standalone: /standalone:\s*true/,
     imports: /imports:\s*\[([^\]]*)\]/,
     declarations: /declarations:\s*\[([^\]]*)\]/,
-    importStatement: /import\s*\{([^}]*)\}\s*from\s*['"]([^'"]+)['"]/g,
+    importStatement: /import\s+.*?from\s+['"].*?['"];?/g,
     componentTag: /selector:\s*['"]([^'"]+)['"],/,
     className: /export\s+class\s+(\w+)/,
     moduleName: /@NgModule\(\{([\s\S]*?)\}\)/,
@@ -49,8 +49,12 @@ export class FileHelper {
     return fs.existsSync(filePath) ? fs.readFileSync(filePath, this.Utf8) : "";
   }
 
-  static writeFile(fileName: string, data: any): void {
+  static writeOutputFile(fileName: string, data: any): void {
     fs.writeFileSync(`outputs/${fileName}`, JSON.stringify(data, null, 2));
+  }
+
+  static writeFile(fileName: string, data: any): void {
+    fs.writeFileSync(fileName, data);
   }
 
   static resolveTemplatePath(file: string, content: string) {

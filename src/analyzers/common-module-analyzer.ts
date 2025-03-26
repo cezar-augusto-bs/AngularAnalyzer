@@ -48,7 +48,7 @@ export class CommonModuleAnalyzer {
       (r) => !!r && r.usesCommonFeatures && !r.hasCommonModule
     );
 
-    FileHelper.writeFile("common-module.json", {
+    FileHelper.writeOutputFile("common-module.json", {
       "required-imports": requiredImports,
       "non-required-imports": nonRequiredImports,
     });

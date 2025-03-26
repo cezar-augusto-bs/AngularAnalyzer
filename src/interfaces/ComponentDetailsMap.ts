@@ -4,6 +4,7 @@ interface ComponentDetailsMap {
 
 interface ComponentsDetailsDetailsMap {
   standalone: boolean;
+  path: string;
   selector: string;
   imports: string[];
   tags: string[];

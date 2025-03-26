@@ -15,7 +15,7 @@ export class StandaloneMigrationAnalyzer {
     this.getReport(files, report, FileHelper.ComponentsPath);
     this.getReport(sharedFiles, report, FileHelper.SharedPath);
 
-    FileHelper.writeFile("standalone-to-migrate-output.json", report);
+    FileHelper.writeOutputFile("standalone-to-migrate-output.json", report);
   }
 
   private static getReport(
