@@ -7,8 +7,6 @@ export class FileHelper {
     "C:\\Repos\\VGR.Angular\\src\\app\\lazy-modules";
   public static readonly SharedPath =
     "C:\\Repos\\VGR.Angular\\src\\app\\shared";
-  public static readonly TagsToIgnorePath =
-    "C:\\Users\\User\\Desktop\\AngularAnalyzer\\src\\helpers\\jsons\\tags-to-ignore.json";
 
   public static readonly Utf8 = "utf8";
 

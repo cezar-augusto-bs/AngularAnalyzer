@@ -40,37 +40,37 @@ export class UnusedComponentsImportsAnalyzer {
         continue;
       }
 
-      const contentBeforeComponentMatch = fileContent.match(
-        /^(import\s.*?;[\s\n]*)+/gs
-      );
+      // const contentBeforeComponentMatch = fileContent.match(
+      //   /^(import\s.*?;[\s\n]*)+/gs
+      // );
 
-      if (!contentBeforeComponentMatch) {
-        continue;
-      }
-      const contentBeforeComponent = contentBeforeComponentMatch[0];
+      // if (!contentBeforeComponentMatch) {
+      //   continue;
+      // }
+      // const contentBeforeComponent = contentBeforeComponentMatch[0];
 
-      const updatedContentBeforeComponent =
-        contentBeforeComponentMatch[0].replace(
-          FileHelper.Regex.importStatement,
-          (match) => {
-            if (
-              unusedImports.some((unusedImport) => match.includes(unusedImport))
-            ) {
-              return "";
-            }
-            return match;
-          }
-        );
+      // const updatedContentBeforeComponent =
+      //   contentBeforeComponentMatch[0].replace(
+      //     FileHelper.Regex.importStatement,
+      //     (match) => {
+      //       if (
+      //         unusedImports.some((unusedImport) => match.includes(unusedImport))
+      //       ) {
+      //         return "";
+      //       }
+      //       return match;
+      //     }
+      //   );
 
-      let cleanedContentBeforeComponent = updatedContentBeforeComponent.replace(
-        /\n\s*\n+/g,
-        "\n"
-      );
+      // let cleanedContentBeforeComponent = updatedContentBeforeComponent.replace(
+      //   /\n\s*\n+/g,
+      //   "\n"
+      // );
 
-      fileContent = fileContent.replace(
-        contentBeforeComponent,
-        cleanedContentBeforeComponent
-      );
+      // fileContent = fileContent.replace(
+      //   contentBeforeComponent,
+      //   cleanedContentBeforeComponent
+      // );
 
       const importsDeclaration = importsDeclarationMatch[1];
       const updatedImports = unusedImports.reduce(
@@ -100,6 +100,15 @@ export class UnusedComponentsImportsAnalyzer {
 
     const unusedImportsMap: ComponentMigrationMap = {};
     for (const [componentKey, componentMap] of Object.entries(componentsMap)) {
+      if (
+        !componentMap.path.includes(
+          "C:\\Repos\\VGR.Angular\\src\\app\\lazy-modules\\supplier"
+        )
+      ) {
+        continue;
+      }
+      console.log(componentMap.path);
+
       const usedModules = new Set(
         componentMap.tags.map((tag) => componentsSelector[tag]).filter(Boolean)
       );
@@ -174,10 +183,10 @@ export class UnusedComponentsImportsAnalyzer {
     }
 
     FileHelper.writeOutputFile("components-map-output.json", componentsMap);
-    // FileHelper.writeFile(
-    //   "components-selector-map-output.json",
-    //   componentsSelector
-    // );
+    FileHelper.writeOutputFile(
+      "components-selector-map-output.json",
+      componentsSelector
+    );
 
     return { componentsMap, componentsSelector };
   }
@@ -218,7 +227,7 @@ export class UnusedComponentsImportsAnalyzer {
       modulesMap[moduleName].push(...declaredComponents);
     }
 
-    // FileHelper.writeFile("modules-map-output.json", modulesMap);
+    FileHelper.writeOutputFile("modules-map-output.json", modulesMap);
 
     return modulesMap;
   }
